@@ -1,5 +1,5 @@
 {
-    "name": "aetherpulse/prismpath",
+    "name": "junaid63/prism-path",
     "description": "PrismPath is a premium Laravel analytics, heatmap, session replay, and AI-assisted insight package.",
     "type": "library",
     "keywords": [
@@ -10,34 +10,33 @@
         "prismpath",
         "google-analytics",
         "dashboard",
-        "aetherpulse"
+        "ai-insights"
     ],
-    "homepage": "https://github.com/aetherpulse/prismpath",
+    "homepage": "https://github.com/junaid63/Prism-Path",
     "license": "MIT",
     "authors": [
         {
-            "name": "PrismPath",
+            "name": "Junaid",
             "role": "Developer"
         }
     ],
     "support": {
-        "issues": "https://github.com/aetherpulse/prismpath/issues",
-        "source": "https://github.com/aetherpulse/prismpath"
+        "issues": "https://github.com/junaid63/Prism-Path/issues",
+        "source": "https://github.com/junaid63/Prism-Path"
     },
     "autoload": {
         "psr-4": {
-            "UltraClarity\\Analytics\\": "src/",
-            "UltraClarity\\Analytics\\Database\\Seeders\\": "database/seeders/"
+            "PrismPath\\Analytics\\": "src/",
+            "PrismPath\\Analytics\\Database\\Seeders\\": "database/seeders/"
         }
     },
     "extra": {
         "laravel": {
             "providers": [
-                "UltraClarity\\Analytics\\UltraClarityServiceProvider"
+                "PrismPath\\Analytics\\PrismPathServiceProvider"
             ],
             "aliases": {
-                "PrismPath": "UltraClarity\\Analytics\\Facades\\UltraClarity",
-                "UltraClarity": "UltraClarity\\Analytics\\Facades\\UltraClarity"
+                "PrismPath": "PrismPath\\Analytics\\Facades\\PrismPath"
             }
         }
     },

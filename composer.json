@@ -1,8 +1,8 @@
 {
-    "name": "laravel/laravel",
+    "name": "junaid63/prism-path-demo",
     "type": "project",
-    "description": "The Laravel Framework.",
-    "keywords": ["framework", "laravel"],
+    "description": "PrismPath Analytics Demo Application - Laravel 10 application showcasing the prism-path analytics package.",
+    "keywords": ["framework", "laravel", "analytics", "demo"],
     "license": "MIT",
     "require": {
         "php": "^8.1",

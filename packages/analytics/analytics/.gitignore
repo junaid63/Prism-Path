@@ -1,7 +1,0 @@
-/vendor
-/node_modules
-/.phpunit.cache
-/.idea
-/.vscode
-.DS_Store
-Thumbs.db

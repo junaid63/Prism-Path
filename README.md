@@ -1,67 +1,113 @@
 # PrismPath Analytics
 
-PrismPath is a Laravel 10 application plus an installable Composer package at `packages/analytics`. It provides session replay capture, click and scroll heatmaps, custom events, cached dashboard metrics, exports, retention cleanup, demo seed data, and AI-assisted hotspot analysis.
+`junaid63/prism-path` is an installable Laravel analytics package for live visitors, session replay, heatmaps, page analytics, click and scroll tracking, custom events, funnels, exports, scheduled reports, and AI-assisted engagement insights.
 
-## Quick Start
+It is designed to feel familiar to teams who use Google Analytics, Microsoft Clarity, or Salesforce dashboards, while staying understandable to Laravel developers.
+
+## Installation
+
+Install the package via Composer:
 
 ```bash
-composer install
-php artisan migrate --seed
-php artisan serve
+composer require junaid63/prism-path
 ```
 
-Open `http://127.0.0.1:8000`, interact with the page, then open `/prismpath` or `/analytics`.
+Publish package files and run migrations:
 
-Dashboard basic auth demo account:
-
-```text
-admin@prismpath.test
-password
+```bash
+php artisan vendor:publish --tag=prismpath-config
+php artisan vendor:publish --tag=prismpath-migrations
+php artisan migrate
+php artisan prismpath:seed
 ```
 
-The app defaults to SQLite. To use MySQL, edit `.env`:
+Add the tracker to your main Blade layout before `</body>`:
 
-```dotenv
-DB_CONNECTION=mysql
-DB_HOST=127.0.0.1
-DB_PORT=3306
-DB_DATABASE=clarity
-DB_USERNAME=root
-DB_PASSWORD=
+```blade
+@prismpath
 ```
 
-## Package Installation
+Open the analytics dashboard:
 
-The root project uses a Composer path repository:
-
-```json
-{
-  "repositories": [
-    {
-      "type": "path",
-      "url": "packages/analytics",
-      "options": { "symlink": true }
-    }
-  ],
-  "require": {
-    "aetherpulse/prismpath": "dev-main"
-  }
-}
+```
+/analytics
+/analytics/dashboard
 ```
 
-For Packagist, publish `packages/ultraclarity/analytics` as `aetherpulse/prismpath`. The package is PSR-4 compliant and auto-discovers `UltraClarity\Analytics\UltraClarityServiceProvider` on Laravel 8+.
+Default demo credentials:
 
-## Publishables
+```
+Email: admin@prismpath.test
+Password: password
+```
+
+## Configuration
+
+Configure your analytics settings in `config/prismpath.php`. Key options include:
+
+- `ANALYTICS_ENABLED` - Enable/disable tracking
+- `ANALYTICS_SITE_ID` - Your site identifier
+- `ANALYTICS_ROUTE_PREFIX` - Dashboard URL prefix
+- `ANALYTICS_SESSIONS` - Enable session replay
+- `ANALYTICS_HEATMAPS` - Enable heatmaps
+- `ANALYTICS_CLICKS` - Enable click tracking
+- `ANALYTICS_AI_INSIGHTS` - Enable AI-powered insights
+
+## Demo Application
+
+See the `/demo` folder for a complete Laravel 10 demo application using this package.
+
+## Features
+
+- 🎥 Session Replay - Record and playback user sessions
+- 🔥 Heatmaps - Visualize user interactions
+- 📊 Analytics - Track page views and custom events
+- 🤖 AI Insights - Get AI-powered engagement recommendations
+- 📈 Exports - Export analytics data
+- 📧 Reports - Scheduled email reports
+- 🔐 Secure Dashboard - Basic auth protected dashboard
+
+## License
+
+MIT License. See LICENSE.md file for details.
+
+## Support
+
+For issues and questions, visit: https://github.com/junaid63/Prism-Path
+
+Set this in `.env`:
+
+```env
+DB_CONNECTION=sqlite
+DB_DATABASE=/absolute/path/to/database/database.sqlite
+```
+
+Then run:
 
 ```bash
 php artisan vendor:publish --tag=ultraclarity-config
-php artisan vendor:publish --tag=ultraclarity-assets
+php artisan vendor:publish --tag=ultraclarity-migrations
 php artisan migrate
+php artisan ultraclarity:seed
+php artisan serve
 ```
 
-## Blade Snippet
+## Dashboard Panels
 
-Add the tracker before `</body>`:
+PrismPath keeps every major feature within two or three clicks:
+
+- **Overview**: live users, visitors, sessions, page views, bounce rate, scroll depth, movement samples, and heatmap intensity.
+- **Live Users**: active sessions with current page, activity, device, OS, browser, city, country, clicks, scroll depth, and replay access.
+- **Sessions & Timelines**: searchable, sortable, paginated session table with expandable page details and embedded replay controls.
+- **Page Views**: top URLs, views, average duration, exit rate, scroll depth, and click volume.
+- **Clicks & Scrolls**: element-level click analytics and page behavior charts.
+- **Heatmaps**: click, movement, and scroll overlays with AI hotspot summaries.
+- **Events & Conversions**: custom event counts and funnel conversion progress.
+- **Exports & Reports**: JSON, CSV, timeline, heatmap, live user, session, and print/PDF report exports.
+
+## Tracking Snippet
+
+Use the Blade directive:
 
 ```blade
 @prismpath
@@ -73,91 +119,122 @@ Or render manually:
 {!! PrismPath::script() !!}
 ```
 
-The browser snippet captures page views, clicks, throttled mouse movement, scroll depth, navigation duration, compact replay events, and custom events. GDPR opt-out is available:
+The snippet batches and tracks:
 
-```js
+- Page views and navigation paths
+- Clicks and element selectors
+- Scroll depth
+- Mouse movement density
+- Form submissions
+- Video plays
+- Typing/input activity metadata
+- Custom events
+- GDPR opt-out state
+
+Custom event example:
+
+```html
+<script>
+window.PrismPath.event('signup_started', {
+    plan: 'pro',
+    source: 'pricing_page'
+});
+</script>
+```
+
+Privacy controls:
+
+```html
+<script>
 window.PrismPath.optOut();
 window.PrismPath.optIn();
-window.PrismPath.event('plan_selected', { plan: 'pro', value: 49 });
-```
-
-## Dashboard
-
-Visit `/ultraclarity` to view:
-
-- Real-time visitor counters and page-view totals
-- AI-highlighted click, scroll, and mouse movement hotspots
-- Chart.js line, bar, doughnut, and pie charts for visitors, pages, devices, browsers, and operating systems
-- Fixed-size chart frames that stay stable during live updates
-- Google Analytics-style sidebar navigation for Overview, Live Users, Sessions & Timelines, Page Views, Clicks & Scrolls, Heatmaps, Events & Conversions, and Exports & Reports
-- Live user list with current page, duration, clicks, scroll depth, device, browser, OS, IP, city, and country
-- Live activity labels for active, idle, typing, deep scrolling, and high-click sessions
-- Per-user horizontal timelines with page duration bars, click counts, movement density, scroll depth, and timestamps
-- Filtered analytics by date range, hour, page, device, browser, OS, country, city, and login state
-- Conversion funnels and event frequency panels
-- Session replay playback with pause, slow, fast, and skip-idle controls
-- Recent replay sessions with device, duration, event, and scroll metadata
-- Top pages by view count and scroll depth
-- CSV export for `pageviews`, `clicks`, and `events`
-- JSON export for the full dashboard payload
-- Print-friendly report export via `/ultraclarity/report/pdf`
-- CSV exports for `heatmaps`, `sessions`, `live`, `elements`, and `timelines`
-
-Live updates work immediately through a 5-second polling fallback. If the host app configures Laravel Echo/Pusher and exposes `window.Echo`, PrismPath also broadcasts `session.updated` events on the `ultraclarity.live` channel.
-
-Section APIs are available for lightweight integrations:
-
-```text
-/ultraclarity/section/live
-/ultraclarity/section/sessions
-/ultraclarity/section/pages
-/ultraclarity/section/behavior
-/ultraclarity/section/heatmaps
-/ultraclarity/section/events
-/ultraclarity/section/exports
-```
-
-Embed compact live stats anywhere in Blade:
-
-```blade
-@prismpathStats
+</script>
 ```
 
 ## Configuration
 
-`config/ultraclarity.php` controls:
-
-- Feature flags for sessions, heatmaps, clicks, AI insights, and optional Echo updates
-- Retention windows for raw events, recordings, and aggregates
-- Database, Redis, or disk/S3-oriented storage settings
-- JS snippet options including async/defer, sample rate, masking, and GDPR behavior
-- Route prefix, dashboard middleware, and API middleware
-
-## Artisan Commands
+Publish config:
 
 ```bash
-php artisan ultraclarity:seed --fresh
-php artisan ultraclarity:heatmaps
-php artisan ultraclarity:heatmaps --path=/pricing
-php artisan ultraclarity:cleanup
-php artisan ultraclarity:report daily --email
+php artisan vendor:publish --tag=ultraclarity-config
 ```
 
-`ultraclarity:seed` creates demo visitors, sessions, page views, clicks, custom events, replay payloads, and heatmaps. `ultraclarity:cleanup` enforces configured retention periods.
+Important `.env` values:
 
-## Architecture
+```env
+ULTRACLARITY_ENABLED=true
+ULTRACLARITY_ROUTE_PREFIX=ultraclarity
+ULTRACLARITY_DASHBOARD_AUTH=true
+ULTRACLARITY_DASHBOARD_EMAIL=admin@prismpath.test
+ULTRACLARITY_DASHBOARD_PASSWORD=password
 
-Core namespace: `UltraClarity\Analytics`.
+ULTRACLARITY_SESSIONS=true
+ULTRACLARITY_HEATMAPS=true
+ULTRACLARITY_CLICKS=true
+ULTRACLARITY_AI_INSIGHTS=true
+ULTRACLARITY_ECHO=false
 
-Important folders:
+ULTRACLARITY_RAW_RETENTION_DAYS=90
+ULTRACLARITY_RECORDING_RETENTION_DAYS=30
+ULTRACLARITY_AGGREGATE_RETENTION_DAYS=365
 
-- `src/Models`: `Visitor`, `Session`, `PageView`, `ClickEvent`, `CustomEvent`, `HeatmapData`
-- `src/Services`: ingestion, replay compression, script rendering, AI hotspot clustering
-- `src/Repositories`: cached dashboard queries
-- `src/Commands`: cleanup, demo seeding, heatmap regeneration
-- `routes/web.php` and `routes/api.php`: dashboard, snippet, collection endpoints
-- `resources/views`: Blade dashboard and components
-- `resources/js`: lightweight tracker and Vue dashboard source
-- `database/migrations`: installable package tables
+ULTRACLARITY_STORAGE_DRIVER=database
+ULTRACLARITY_STORAGE_DISK=local
+ULTRACLARITY_REDIS_CONNECTION=default
+ULTRACLARITY_SAMPLE_RATE=1.0
+```
 
-Replay payloads are gzipped and base64 encoded before storage. Heatmap AI is implemented as deterministic local clustering so it works without external services; teams can extend `AiInsightService` to call a model provider or queue deeper analysis.
+## Real-Time Updates
+
+The dashboard polls live users every few seconds by default. If your app configures Laravel Echo and broadcasts the `ultraclarity.live` channel, PrismPath listens for `.session.updated` events and updates the live user panel immediately.
+
+PrismPath accepts matching `PRISMPATH_*` environment keys, for example
+`PRISMPATH_ENABLED=true` and `PRISMPATH_DASHBOARD_EMAIL=admin@example.com`.
+The legacy `ULTRACLARITY_*` keys, `@ultraclarity` directive, and `UltraClarity`
+facade remain as compatibility aliases for existing installations.
+
+## Commands
+
+```bash
+php artisan ultraclarity:seed
+php artisan ultraclarity:seed --fresh
+php artisan ultraclarity:heatmaps
+php artisan ultraclarity:cleanup
+php artisan ultraclarity:report daily
+php artisan ultraclarity:report weekly
+php artisan ultraclarity:report monthly --email
+```
+
+## Documentation
+
+- [Installation](docs/installation.md)
+- [Usage Guide](docs/usage.md)
+- [Configuration](docs/configuration.md)
+- [Developer Notes](docs/developer.md)
+
+## Package Structure
+
+```text
+config/                     Package configuration
+database/migrations/        Analytics tables
+database/seeders/           Demo analytics data
+resources/js/               Tracker and dashboard assets
+resources/views/            Dashboard, report, components
+routes/web.php              Dashboard, exports, replay APIs
+routes/api.php              Collection endpoint
+src/Commands/               Cleanup, seed, reports, heatmaps
+src/Events/                 Live dashboard events
+src/Http/Controllers/       Collection and dashboard APIs
+src/Models/                 Visitor, Session, PageView, events, heatmaps
+src/Repositories/           Dashboard query layer
+src/Services/               Ingestion, compression, AI insights
+```
+
+## Production Notes
+
+- Keep dashboard authentication enabled or replace the middleware with your app's admin auth.
+- Use queue workers for heavier analytics processing.
+- Use Redis cache in high-traffic apps.
+- Review privacy requirements for IP storage, input masking, consent, and retention.
+- Set `ULTRACLARITY_SAMPLE_RATE` below `1.0` for very high traffic sites.
+

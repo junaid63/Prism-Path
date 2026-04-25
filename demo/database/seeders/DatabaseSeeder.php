@@ -6,7 +6,6 @@ namespace Database\Seeders;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
-use PrismPath\Analytics\Database\Seeders\PrismPathDemoSeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -16,10 +15,10 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         User::firstOrCreate(
-            ['email' => 'admin@prismpath.test'],
-            ['name' => 'PrismPath Admin', 'password' => Hash::make('password')]
+            ['email' => 'admin@ultraclarity.test'],
+            ['name' => 'UltraClarity Admin', 'password' => Hash::make('password')]
         );
 
-        $this->call(PrismPathDemoSeeder::class);
+        $this->call(UltraClarityDemoSeeder::class);
     }
 }

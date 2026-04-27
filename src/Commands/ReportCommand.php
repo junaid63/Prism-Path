@@ -36,11 +36,13 @@ class ReportCommand extends Command
 
     private function filtersFor(string $frequency): array
     {
-        return match ($frequency) {
-            'weekly' => ['from' => now()->subWeek()->toDateString(), 'to' => now()->toDateString()],
-            'monthly' => ['from' => now()->subMonth()->toDateString(), 'to' => now()->toDateString()],
-            default => ['from' => now()->subDay()->toDateString(), 'to' => now()->toDateString()],
-        };
+        if ($frequency === 'weekly') {
+            return ['from' => now()->subWeek()->toDateString(), 'to' => now()->toDateString()];
+        } elseif ($frequency === 'monthly') {
+            return ['from' => now()->subMonth()->toDateString(), 'to' => now()->toDateString()];
+        } else {
+            return ['from' => now()->subDay()->toDateString(), 'to' => now()->toDateString()];
+        }
     }
 }
 

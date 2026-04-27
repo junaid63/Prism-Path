@@ -6,10 +6,14 @@ use Illuminate\Contracts\Foundation\Application;
 
 class PrismPathManager
 {
-    public function __construct(private readonly Application $app)
-    {
-    }
+        /**
+         * @var Application
+         */
+        private $app;
 
+        public function __construct(Application $app)
+        {
+            $this->app = $app;
     public function script(array $options = []): string
     {
         if (! config('ultraclarity.enabled')) {

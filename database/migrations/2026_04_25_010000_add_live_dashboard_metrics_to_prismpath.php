@@ -4,18 +4,18 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
+class AddLiveDashboardMetricsToPrismpath extends Migration
 {
-    public function up(): void
+    public function up()
     {
-        Schema::table('uc_visitors', function (Blueprint $table): void {
+        Schema::table('uc_visitors', function (Blueprint $table) {
             $table->string('ip_address')->nullable()->after('ip_hash');
             $table->string('city')->nullable()->after('country');
             $table->boolean('is_authenticated')->default(false)->after('os');
             $table->string('user_identifier')->nullable()->after('is_authenticated');
         });
 
-        Schema::table('uc_sessions', function (Blueprint $table): void {
+        Schema::table('uc_sessions', function (Blueprint $table) {
             $table->string('current_url', 2048)->nullable()->after('exit_page');
             $table->string('current_path')->nullable()->after('current_url')->index();
             $table->string('source')->nullable()->after('current_path')->index();
@@ -25,14 +25,21 @@ return new class extends Migration
             $table->timestamp('last_activity_at')->nullable()->after('ended_at')->index();
         });
 
-        Schema::table('uc_page_views', function (Blueprint $table): void {
+        Schema::table('uc_page_views', function (Blueprint $table) {
             $table->unsignedSmallInteger('sequence')->default(1)->after('session_id');
         });
 
-        Schema::create('uc_behavior_events', function (Blueprint $table): void {
+        Schema::create('uc_behavior_events', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('session_id')->constrained('uc_sessions')->cascadeOnDelete();
-            $table->foreignId('page_view_id')->nullable()->constrained('uc_page_views')->nullOnDelete();
+            if (method_exists($table, 'foreignId')) {
+                $table->foreignId('session_id')->constrained('uc_sessions')->cascadeOnDelete();
+                $table->foreignId('page_view_id')->nullable()->constrained('uc_page_views')->nullOnDelete();
+            } else {
+                $table->unsignedBigInteger('session_id');
+                $table->foreign('session_id')->references('id')->on('uc_sessions')->onDelete('cascade');
+                $table->unsignedBigInteger('page_view_id')->nullable();
+                $table->foreign('page_view_id')->references('id')->on('uc_page_views')->onDelete('set null');
+            }
             $table->string('type')->index();
             $table->string('path')->index();
             $table->unsignedInteger('x')->nullable();
@@ -47,15 +54,15 @@ return new class extends Migration
         });
     }
 
-    public function down(): void
+    public function down()
     {
         Schema::dropIfExists('uc_behavior_events');
 
-        Schema::table('uc_page_views', function (Blueprint $table): void {
+        Schema::table('uc_page_views', function (Blueprint $table) {
             $table->dropColumn('sequence');
         });
 
-        Schema::table('uc_sessions', function (Blueprint $table): void {
+        Schema::table('uc_sessions', function (Blueprint $table) {
             $table->dropColumn([
                 'current_url',
                 'current_path',
@@ -67,9 +74,9 @@ return new class extends Migration
             ]);
         });
 
-        Schema::table('uc_visitors', function (Blueprint $table): void {
+        Schema::table('uc_visitors', function (Blueprint $table) {
             $table->dropColumn(['ip_address', 'city', 'is_authenticated', 'user_identifier']);
         });
     }
-};
+}
 

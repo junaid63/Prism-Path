@@ -74,18 +74,23 @@ class DashboardController
 
         if (in_array($type, ['heatmaps', 'sessions', 'live', 'elements', 'timelines'], true)) {
             $payload = $this->analytics->dashboard($this->filters($request));
-            $rows = match ($type) {
-                'heatmaps' => collect($payload['heatmaps'])->map(fn ($row) => [
+            
+            if ($type === 'heatmaps') {
+                $rows = collect($payload['heatmaps'])->map(fn ($row) => [
                     'path' => $row->path,
                     'type' => $row->type,
                     'sample_size' => $row->sample_size,
                     'summary' => $row->ai_insights['summary'] ?? '',
-                ]),
-                'sessions' => collect($payload['sessions']),
-                'live' => collect($payload['liveUsers']),
-                'elements' => collect($payload['elements']),
-                'timelines' => collect($payload['sessions'])->flatMap(fn ($session) => collect($session['timeline'])->map(fn ($page) => $page + ['session_id' => $session['id']])),
-            };
+                ]);
+            } elseif ($type === 'sessions') {
+                $rows = collect($payload['sessions']);
+            } elseif ($type === 'live') {
+                $rows = collect($payload['liveUsers']);
+            } elseif ($type === 'elements') {
+                $rows = collect($payload['elements']);
+            } else {
+                $rows = collect($payload['sessions'])->flatMap(fn ($session) => collect($session['timeline'])->map(fn ($page) => $page + ['session_id' => $session['id']]));
+            }
 
             return response()->streamDownload(function () use ($rows): void {
                 $handle = fopen('php://output', 'w');

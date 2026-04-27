@@ -145,31 +145,34 @@ class AnalyticsRepository
             ->latest('last_activity_at')
             ->limit(50)
             ->get()
-            ->map(fn (Session $session) => [
-                'id' => $session->id,
-                'session_uuid' => $session->session_uuid,
-                'visitor_uuid' => $session->visitor?->visitor_uuid,
-                'started_at' => optional($session->started_at)->toIso8601String(),
-                'duration' => $session->duration_seconds,
-                'current_url' => $session->current_url,
-                'current_path' => $session->current_path,
-                'device' => $session->visitor?->device,
-                'browser' => $session->visitor?->browser,
-                'os' => $session->visitor?->os,
-                'ip' => $session->visitor?->ip_address,
-                'city' => $session->visitor?->city,
-                'country' => $session->visitor?->country,
-                'authenticated' => (bool) $session->visitor?->is_authenticated,
-                'clicks' => $session->click_count,
-                'movements' => $session->movement_count,
-                'scroll' => $session->last_scroll_depth,
-                'typing' => BehaviorEvent::where('session_id', $session->id)->where('type', 'typing')->count(),
-                'activity' => $this->activityLabel($session),
-                'last_activity' => optional($session->last_activity_at)->diffForHumans(),
-                'path' => $session->pageViews->pluck('path')->values(),
-                'timeline' => $this->pageTimeline($session),
-                'source' => $session->source,
-            ]);
+            ->map(function (Session $session) {
+                $visitor = $session->visitor;
+                return [
+                    'id' => $session->id,
+                    'session_uuid' => $session->session_uuid,
+                    'visitor_uuid' => $visitor ? $visitor->visitor_uuid : null,
+                    'started_at' => optional($session->started_at)->toIso8601String(),
+                    'duration' => $session->duration_seconds,
+                    'current_url' => $session->current_url,
+                    'current_path' => $session->current_path,
+                    'device' => $visitor ? $visitor->device : null,
+                    'browser' => $visitor ? $visitor->browser : null,
+                    'os' => $visitor ? $visitor->os : null,
+                    'ip' => $visitor ? $visitor->ip_address : null,
+                    'city' => $visitor ? $visitor->city : null,
+                    'country' => $visitor ? $visitor->country : null,
+                    'authenticated' => (bool) ($visitor ? $visitor->is_authenticated : false),
+                    'clicks' => $session->click_count,
+                    'movements' => $session->movement_count,
+                    'scroll' => $session->last_scroll_depth,
+                    'typing' => BehaviorEvent::where('session_id', $session->id)->where('type', 'typing')->count(),
+                    'activity' => $this->activityLabel($session),
+                    'last_activity' => optional($session->last_activity_at)->diffForHumans(),
+                    'path' => $session->pageViews->pluck('path')->values(),
+                    'timeline' => $this->pageTimeline($session),
+                    'source' => $session->source,
+                ];
+            });
     }
 
     public function topPages(array $filters = []): Collection

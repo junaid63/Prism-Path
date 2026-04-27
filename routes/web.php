@@ -10,7 +10,7 @@ $dashboardPrefix = trim((string) config('ultraclarity.route_prefix'), '/');
 
 Route::prefix(config('ultraclarity.route_prefix'))
     ->middleware(config('ultraclarity.middleware'))
-    ->group(function (): void {
+    ->group(function () {
         Route::get('/', [DashboardController::class, 'index'])->name('ultraclarity.dashboard');
         Route::get('/dashboard', [DashboardController::class, 'index'])->name('ultraclarity.dashboard.alias');
         Route::get('/data', [DashboardController::class, 'data'])->name('ultraclarity.data');

@@ -16,15 +16,14 @@ class ProcessAnalyticsJob implements ShouldQueue
     use Queueable;
     use SerializesModels;
 
-    public function __construct(public readonly string $path)
-    {
-        $this->onQueue('analytics');
-    }
+        /**
+         * @var string
+         */
+        public $path;
 
-    public function handle(): void
-    {
-        if (config('ultraclarity.features.heatmaps')) {
-            Artisan::call('ultraclarity:heatmaps', ['--path' => $this->path]);
+        public function __construct($path)
+        {
+            $this->path = $path;
         }
     }
 }

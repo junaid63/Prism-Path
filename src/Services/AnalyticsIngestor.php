@@ -165,7 +165,7 @@ class AnalyticsIngestor
         $session = isset($data['sessionId']) ? Session::where('session_uuid', $data['sessionId'])->first() : null;
 
         return CustomEvent::create([
-            'session_id' => $session?->id,
+            'session_id' => $session ? $session->id : null,
             'name' => $data['name'],
             'path' => $data['path'] ?? null,
             'properties' => $data['properties'] ?? [],
